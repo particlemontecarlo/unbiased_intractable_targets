@@ -46,16 +46,11 @@ data_file <- settings$data_file
 lowTcalibration_file <- settings$lowTcalibration_file
 nrep <- 1000
 
-
-
-
+# load the data used in the experiments
 load(data_file)
 x <- as.matrix(x[1:(nobservations+1),],ncol=1)
 y <- as.matrix(y[1:nobservations,],ncol=1)
 print(sprintf('number of obs : %i',nobservations))
-
-
-N_linecolors <- rainbow(n_N_arr_Hkm)
 
 
 
@@ -70,16 +65,18 @@ K_plot <- 4000
 n_bs <- 3
 
 
-
+### N.B. the following folder locations must be set according to the results of the simulations
 # data folders
-datafolder <- ''          # folder containing the results of the unbiased estimators, having run lg_ssm_different_N_Hkm.R
-mt_res_datafile <- ''     # folder containing the results of the meeting times, having run lg_ssm_different_N.R
-serial_res_datafile <-''  # folder containing the results of the serial algorithm
-fig_folder <- ''          # folder used to specify where the resulting figures are directed to
+datafolder <- 'folder/example/'          # folder containing the results of the unbiased estimators, having run lg_ssm_different_N_Hkm.R
+mt_res_datafile <- 'folder/example/'     # folder containing the results of the meeting times, having run lg_ssm_different_N.R
+serial_res_datafile <-'folder/example/'  # folder containing the results of the serial algorithm
+
+### specify where to output the results
+fig_folder <- 'folder/example/'          # folder used to specify where the resulting figures are directed to
 
 
 
-fig_folder <- 'inst/lg_ssm/2params/unif_prior/figs/'
+# fig_folder <- 'inst/lg_ssm/2params/unif_prior/figs/'
 
 
 # get meeting times

@@ -52,13 +52,12 @@ exp_save_file <- "inst/exps/lg/optimal_N_coupling_different_N.RData"
 exp_name <- "different_N"
 run_on_server <- TRUE
 
-
+# data file
 load(data_file)
 x <- as.matrix(x[1:(nobservations+1),],ncol=1)
 y <- as.matrix(y[1:nobservations,],ncol=1)
 print(sprintf('number of obs : %i',nobservations))
 
-# load(lowTcalibration_file)
 
 
 
@@ -69,16 +68,14 @@ mh_prop <- diag(c(0.04,0.04))#mh_prop_chosen
 # request cores
 registerDoMC(cores = cores_requested)
 
-
+# model
 ar_model <- get_lgssm_2params(dimension,sigma_y)
 
-
-
+# memory for the particle filter
 module_tree <<- Module("module_tree", PACKAGE = "debiasedpmcmc")
 TreeClass <<- module_tree$Tree
 
-
-
+# MH targets
 mh_loglikelihood <- function(theta){
   kf_results <- kf(y, c(theta,sigma_y), mu_0, Sigma_0)
   return(kf_results$loglik)
@@ -88,7 +85,7 @@ mh_loglikelihood <- function(theta){
 # posterior density function up to normalising constant
 mh_logtarget <- function(theta) mh_loglikelihood(theta) + logprior(theta)
 
-
+# PF targets
 # posterior density function up to normalising constant (we use an unnormalised prior)
 estimate_pftarget <- function(theta,nparticles){
   log_prior<-logprior(theta)
@@ -102,6 +99,7 @@ estimate_pftarget <- function(theta,nparticles){
   }
 }
 
+# pm initialisation
 pmmh_init <- function(nparticles){
   chain_state1 <- rinit()
   chain_state2 <- rinit()
@@ -128,6 +126,8 @@ pmmh_kernels <- get_pmmh_kernel(estimate_pftarget, Sigma_proposal = mh_prop, dim
 single_pmmh_kernel <- pmmh_kernels$kernel
 coupled_pmmh_kernel <- pmmh_kernels$coupled_kernel
 
+
+# function to perform a run of PMMH, this will be called a few times in parallel
 run_pmmh <- function(nparticles){
 
   pmmh_kernels <- get_pmmh_kernel(estimate_pftarget, Sigma_proposal = mh_prop, dimension = D_theta)
@@ -163,15 +163,17 @@ run_pmmh <- function(nparticles){
 }
 
 
-
+# perform long runs of PMMH
 pmmh_runs <- foreach(i = 1:n_serial) %dopar% {
   nparticles <- N_arr_serial[i]
   pmmh_res <- run_pmmh(nparticles)
   return(pmmh_res)
 }
 
+# save the results
 save(pmmh_runs,file=serial_data_file)
 
+# load the results and plot some things of interest
 load(serial_data_file)
 
 

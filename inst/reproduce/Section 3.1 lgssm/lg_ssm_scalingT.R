@@ -19,8 +19,6 @@ source("inst/reproduce/Section 3.1 lgssm/exp_settings.R")
 ## Settings
 settings <- lgssm_model_2params_scalingT()
 
-
-
 nobs_arr<- settings$nobs_arr
 nobservations_lowT <- settings$nobservations_lowT
 dimension<- settings$dimension
@@ -67,12 +65,15 @@ for (t in 1:nobs_gendata){
 # request cores
 registerDoMC(cores = cores_requested)
 
+# model
 ar_model <- get_lgssm_2params(dimension,sigma_y)
 
+# used for particle filter
 module_tree <<- Module("module_tree", PACKAGE = "debiasedpmcmc")
 TreeClass <<- module_tree$Tree
 
 
+#### define targets for MH
 # loglikelihood for mcmc
 mh_loglikelihood <- function(theta){
   kf_results <- kf(y, c(theta,sigma_y), mu_0, Sigma_0)
@@ -83,7 +84,7 @@ mh_loglikelihood <- function(theta){
 # posterior density function up to normalising constant
 mh_logtarget <- function(theta) mh_loglikelihood(theta) + logprior(theta)
 
-
+#### definte targets for pmmh
 # posterior density function up to normalising constant (we use an unnormalised prior)
 estimate_pftarget <- function(theta,nparticles){
   log_prior<-logprior(theta)
@@ -114,6 +115,9 @@ pmmh_init <- function(nparticles){
 }
 
 
+
+
+###### get meeting times under the different scalings
 # perform scaling 1
 # set init
 rinit <- function(){
@@ -329,9 +333,9 @@ print(t2-t1)
 save.image(file=mt_resfile)
 print(sprintf('saved to %s',mt_resfile))
 
-
-
-
+#### Plot results
+# the following gets quantiles of the meeting times for each value of T and
+# each scaling then plots then produces the results
 
 # plot graphs
 load(mt_resfile)

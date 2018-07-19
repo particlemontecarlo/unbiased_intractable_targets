@@ -69,16 +69,14 @@ mh_prop <- diag(c(0.04,0.04))#mh_prop_chosen
 # request cores
 registerDoMC(cores = cores_requested)
 
-
+# define the model
 ar_model <- get_lgssm_2params(dimension,sigma_y)
 
-
-
+# initialise the memory for the particle filter
 module_tree <<- Module("module_tree", PACKAGE = "debiasedpmcmc")
 TreeClass <<- module_tree$Tree
 
-
-
+# define MH targets
 mh_loglikelihood <- function(theta){
   kf_results <- kf(y, c(theta,sigma_y), mu_0, Sigma_0)
   return(kf_results$loglik)
@@ -89,17 +87,7 @@ mh_loglikelihood <- function(theta){
 mh_logtarget <- function(theta) mh_loglikelihood(theta) + logprior(theta)
 
 
-# function to help strip out the meeting times
-get_finished_meeting_times <- function(batch_res){
-  finished_meeting_times <- sapply(batch_res, function(x){ if(x$finished){return(x$meetingtime)}})
-  null_mask <- sapply(finished_meeting_times, is.null)
-  dnf <- sum(null_mask)
-  print(paste(dnf,' failed to terminate'))
-  finished_meeting_times<-unlist(finished_meeting_times[!null_mask ])
-  return(list(finished_meeting_times=finished_meeting_times,dnf=dnf))
-}
-
-
+# get pmmh target
 # posterior density function up to normalising constant (we use an unnormalised prior)
 estimate_pftarget <- function(theta,nparticles){
   log_prior<-logprior(theta)
@@ -113,6 +101,7 @@ estimate_pftarget <- function(theta,nparticles){
   }
 }
 
+# pmmh initialisation
 pmmh_init <- function(nparticles){
   chain_state1 <- rinit()
   chain_state2 <- rinit()
