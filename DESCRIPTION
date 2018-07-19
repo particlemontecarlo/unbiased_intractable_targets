@@ -1,0 +1,16 @@
+Package: debiasedpmcmc
+Type: Package
+Title: Debiased particle MCMC with couplings
+Version: 0.1.0
+Author: Pierre E. Jacob, Lawrence T. Middleton
+Maintainer: Pierre E. Jacob <pjacob@fas.harvard.edu>
+Description: This package contains scripts illustrating how the bias of particle MCMC can be removed using couplings
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+Depends:
+    Rcpp,RcppEigen,BH
+Imports:
+    Rcpp (>= 0.11.6),RcppEigen,BH,TruncatedNormal
+LinkingTo: Rcpp,RcppEigen,BH
+RoxygenNote: 6.0.1
