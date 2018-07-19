@@ -60,12 +60,9 @@ x <- as.matrix(x[1:(nobservations+1),],ncol=1)
 y <- as.matrix(y[1:nobservations,],ncol=1)
 print(sprintf('number of obs : %i',nobservations))
 
-# load(lowTcalibration_file)
-
 
 
 # set proposal covariance
-# mh_prop <- diag(c(0.03,0.03))#mh_prop_chosen
 mh_prop <- diag(c(0.04,0.04))#mh_prop_chosen
 
 

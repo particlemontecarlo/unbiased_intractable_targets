@@ -15,9 +15,6 @@ set.seed(1)
 
 # experiment settings
 source("inst/reproduce/Section 3.1 lgssm/exp_settings.R")
-
-
-
 settings <- lgssm_model_2params_100obs()
 
 

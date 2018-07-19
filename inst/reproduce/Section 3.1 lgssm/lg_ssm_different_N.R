@@ -15,8 +15,7 @@ setmytheme()
 source("inst/reproduce/Section 3.1 lgssm/exp_settings.R")
 
 
-##
-## Try a possible coupling with correlated latent variables
+
 ##
 ## Settings
 settings <- lgssm_model_2params_100obs()
